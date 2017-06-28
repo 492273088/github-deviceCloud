@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                         http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-3.2.xsd
+                        http://www.springframework.org/schema/mvc
+                        http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- 激活@Controller模式 -->
+    <mvc:annotation-driven/>
+
+    <!--启用spring的一些annotation -->
+    <context:annotation-config/>
+
+    <!-- 使用Spring组件扫描的方式来实现自动注入bean -->
+    <context:component-scan base-package="com.gxl.dcloud.*"/>
+
+    <!-- 启动对@AspectJ注解的支持  -->
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+    <!--日期类型转换-->
+    <!--<mvc:annotation-driven conversion-service="conversionService"/>-->
+    <!--<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">-->
+        <!--&lt;!&ndash;转换器&ndash;&gt;-->
+        <!--<property name="converters">-->
+            <!--&lt;!&ndash;日期类型转换&ndash;&gt;-->
+            <!--<bean class="com.gxl.dcloud.controller.converter.CustomDateConverter"/>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <!-- 对模型视图名称的解析，即在模型视图名称添加前后缀(如果最后一个还是表示文件夹,则最后的斜杠不要漏了) 使用JSP-->
+    <!-- 默认的视图解析器 在上边的解析错误时使用 (默认使用html)- -->
+    <bean id="defaultViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/page/"/><!--设置JSP文件的目录位置-->
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!-- springmvc文件上传需要配置的节点-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="20971500"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="resolveLazily" value="true"/>
+    </bean>
+
+    <!--避免IE执行AJAX时，返回JSON出现下载文件 -->
+    <bean id="mappingJacksonHttpMessageConverter"
+          class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>text/html;charset=UTF-8</value>
+            </list>
+        </property>
+    </bean>
+    <!-- 启动SpringMVC的注解功能，完成请求和注解POJO的映射 -->
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <ref bean="mappingJacksonHttpMessageConverter"/> <!-- JSON转换器 -->
+            </list>
+        </property>
+    </bean>
+
+    <import resource="classpath:mybatis/mybatis.xml"/>
+    <import resource="classpath:redis/redis.xml"/>
+
+    <bean class="com.gxl.dcloud.service.SpringContextHolder"/>
+</beans>
