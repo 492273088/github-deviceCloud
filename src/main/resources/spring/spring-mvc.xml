@@ -68,5 +68,21 @@
     <import resource="classpath:mybatis/mybatis.xml"/>
     <import resource="classpath:redis/redis.xml"/>
 
-    <bean class="com.gxl.dcloud.service.SpringContextHolder"/>
+    <bean id="activeMQConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL">
+            <value>tcp://localhost:61616?wireFormat.maxInactivityDuration=0</value>
+        </property>
+    </bean>
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory">
+            <ref bean="activeMQConnectionFactory"/>
+        </property>
+    </bean>
+    <bean id="destination" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg index="0">
+            <value>MessageQueue</value>
+        </constructor-arg>
+    </bean>
+
+    <!--<bean class="com.gxl.dcloud.service.SpringContextHolder"/>-->
 </beans>

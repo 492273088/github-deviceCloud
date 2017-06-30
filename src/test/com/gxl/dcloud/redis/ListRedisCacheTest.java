@@ -4,6 +4,7 @@ import com.gxl.dcloud.mapper.LogInfoMapper;
 import com.gxl.dcloud.pojo.LogEnty;
 import junit.framework.TestCase;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -50,6 +51,9 @@ public class ListRedisCacheTest extends TestCase {
     }
 
     public static String getFileSuffixName(String file) {
+        if(StringUtils.isBlank(file)){
+            return null;
+        }
         String prefix = file.substring(file.lastIndexOf(".") + 1).toLowerCase();
         String suffix = "";
         String[] imgArray = {"jpg", "bmp", "jepg", "png", "gif", "pic"};
